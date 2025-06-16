@@ -13,4 +13,5 @@ public interface IRepositorioReservas {
      * @return Optional con la última reserva o empty si no hay reservas
      */
     Optional<Reserva> obtenerUltimaReserva();
+    java.util.ArrayList<Reserva> obtenerTodasLasReservas();
 }

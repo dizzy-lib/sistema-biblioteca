@@ -2,14 +2,14 @@ package application.usecases;
 
 import domain.entities.Libro;
 import interfaces.infraestructure.IRepositorioLibros;
-import shared.utils.Formateador;
+// import shared.utils.Formateador; // No longer needed here for this purpose
 import shared.utils.Validaciones;
 
 import java.util.ArrayList;
 
 /**
- * Clase que delega la responsabilidad de buscar un libro por título
- * dentro del repositorio de libros
+ * Clase que delega la responsabilidad de buscar un libro por un criterio
+ * (título, autor, editorial) dentro del repositorio de libros.
  */
 public class BuscarLibroCasoUso {
     private final IRepositorioLibros repositorioLibros;
@@ -19,20 +19,20 @@ public class BuscarLibroCasoUso {
     }
 
     /**
-     * Ejecuta la búsqueda de un libro dentro del repositorio inyectado
-     * en el constructor
+     * Ejecuta la búsqueda de libros dentro del repositorio inyectado
+     * en el constructor, basado en un criterio de búsqueda.
      *
-     * @param titulo título del libro
-     * @return libro encontrado o null
+     * @param criterio término de búsqueda para título, autor o editorial.
+     * @return Lista de libros encontrados.
      */
-    public ArrayList<Libro> ejecutar(String titulo) {
+    public ArrayList<Libro> ejecutar(String criterio) {
         // Validar que el campo introducido sea alfanumérico o lanza excepción
-        Validaciones.esAlfanumericoFlexible(titulo);
+        Validaciones.esAlfanumericoFlexible(criterio);
 
-        // formatea el título de búsqueda
-        String busquedaFormateada = Formateador.normalizarString(titulo);
+        // Prepara el criterio para la búsqueda (trim y lowercase)
+        String criterioProcesado = criterio.trim().toLowerCase();
 
-        // retorna el libro encontrado en caso contrario retorna null
-        return this.repositorioLibros.buscarLibroPorTitulo(busquedaFormateada);
+        // retorna los libros encontrados
+        return this.repositorioLibros.buscarLibros(criterioProcesado);
     }
 }
