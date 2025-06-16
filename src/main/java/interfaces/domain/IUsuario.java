@@ -1,4 +1,4 @@
 package interfaces.domain;
 
-public class IUsuario {
+public interface IUsuario {
 }
