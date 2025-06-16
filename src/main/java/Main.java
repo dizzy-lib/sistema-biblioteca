@@ -12,6 +12,9 @@ import presentation.controller.UsuarioTerminalController;
 import presentation.services.BibliotecaApplicationService;
 import presentation.services.UsuarioApplicationService;
 import presentation.view.TerminalApplication;
+import shared.exceptions.UsuarioYaRegistradoException;
+
+import java.util.InputMismatchException;
 
 public class Main {
   private static final String RUTA_ARCHIVO_LIBROS_CSV = "libros.csv";

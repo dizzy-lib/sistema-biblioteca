@@ -78,4 +78,8 @@ public class BibliotecaApplicationService {
     }
     return libro;
   }
+
+  public ArrayList<Reserva> verReservasActivas() {
+    return this.repositorioReservas.obtenerTodasLasReservas();
+  }
 }

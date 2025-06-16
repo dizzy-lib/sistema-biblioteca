@@ -1,8 +1,11 @@
 package presentation.controller;
 
 import domain.entities.Libro;
+import domain.entities.Reserva;
 import domain.valueObject.DocumentoRut;
 import presentation.services.BibliotecaApplicationService;
+import shared.exceptions.LibroNoEncontradoException;
+import shared.exceptions.SinReservasActivasException;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -64,7 +67,7 @@ public class LibrosTerminalController {
 
         if (librosEncontrados.isEmpty()) {
             System.out.println("No se encontraron libros con el título '" + nombreLibro + "'.");
-            return;
+            throw new LibroNoEncontradoException("Libro no encontrado");
         }
 
         System.out.println("Libros encontrados:");
@@ -98,6 +101,18 @@ public class LibrosTerminalController {
     }
 
     public void handleDevolverLibro() {
+        ArrayList<Reserva> reservasActivas = this.bibliotecaApplicationService.verReservasActivas();
+
+        if (reservasActivas.isEmpty()) {
+            throw new SinReservasActivasException("No existen reservas activas dentro del sistema");
+        }
+
+        System.out.print("\n=== Mostrando reservas activas ===\n");
+
+        for (Reserva reserva : reservasActivas) {
+            System.out.println("ID: " + reserva.getId() + " | " + "Nombre: " + reserva.getLibro().getTitulo() + " | " + "Rut cliente: " + reserva.getUsuario().getRut().getFormateado());
+        }
+
         System.out.print("ID de la reserva: ");
         String idReserva = scanner.nextLine();
 

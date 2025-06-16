@@ -136,6 +136,8 @@ public class TerminalApplication {
       System.out.println("Error: El ID de la reserva debe ser un número.");
     } catch (ReservaNoEncontradaException | LibroNoEncontradoException e) {
       System.out.println("Error al devolver libro: " + e.getMessage());
+    }  catch (SinReservasActivasException e) {
+      System.out.println("No existen reservas activas dentro del sistema");
     } catch (RuntimeException e) { // Changed from Exception
       System.out.println("Error inesperado al devolver libro: " + e.getMessage());
       e.printStackTrace();

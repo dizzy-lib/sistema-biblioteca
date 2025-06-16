@@ -149,7 +149,7 @@ public class ServicioPersistencia {
         bw.write(linea);
         bw.newLine();
       }
-      System.out.println("Libros guardados en: " + rutaArchivoCsv);
+      System.out.println("[🤖 SISTEMA ] Libros guardados en: " + rutaArchivoCsv);
     } catch (IOException e) {
       System.err.println("Error al escribir el archivo de libros CSV: " + e.getMessage());
     }
@@ -273,7 +273,7 @@ public class ServicioPersistencia {
         bw.write(linea);
         bw.newLine();
       }
-      System.out.println("Reservas guardadas en: " + rutaArchivoCsv);
+      System.out.println("[🤖 SISTEMA] Reservas guardadas en: " + rutaArchivoCsv);
     } catch (IOException e) {
       System.err.println("Error al escribir el archivo de reservas CSV: " + e.getMessage());
     }
