@@ -6,6 +6,9 @@ import domain.services.ServicioPersistencia;
 import domain.services.ServicioUsuarios;
 import domain.valueObject.DocumentoRut;
 import interfaces.infraestructure.IRepositorioUsuarios;
+import shared.exceptions.UsuarioNoEncontradoException;
+
+import java.util.Optional;
 
 public class UsuarioApplicationService {
     private final RegistrarUsuarioCasoUso registrarUsuarioCasoUso;
@@ -31,5 +34,13 @@ public class UsuarioApplicationService {
             this.servicioPersistencia.guardarUsuariosEnCSV(this.rutaUsuariosCsv, this.repositorioUsuarios.obtenerTodosLosUsuarios());
         }
         return usuario;
+    }
+
+    public void verificarUsuarioRegistrado(DocumentoRut rut) {
+        Optional<Usuario> usuario = this.repositorioUsuarios.obtenerUsuario(rut);
+        if (usuario.isEmpty()) {
+            String messageError = String.format("Usuario con rut: %s no encontrado", rut);
+            throw new UsuarioNoEncontradoException(messageError);
+        }
     }
 }

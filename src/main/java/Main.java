@@ -83,7 +83,9 @@ public class Main {
     }
 
     // Controladores de Terminal
-    LibrosTerminalController librosTerminalController = new LibrosTerminalController(bibliotecaApplicationService);
+    LibrosTerminalController librosTerminalController = new LibrosTerminalController(
+            bibliotecaApplicationService, usuarioApplicationService
+    );
     UsuarioTerminalController usuarioTerminalController = new UsuarioTerminalController(usuarioApplicationService);
 
     // Aplicación de Terminal

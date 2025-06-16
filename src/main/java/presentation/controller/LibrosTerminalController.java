@@ -4,18 +4,26 @@ import domain.entities.Libro;
 import domain.entities.Reserva;
 import domain.valueObject.DocumentoRut;
 import presentation.services.BibliotecaApplicationService;
+import presentation.services.UsuarioApplicationService;
 import shared.exceptions.LibroNoEncontradoException;
+import shared.exceptions.OperacionCanceladaException;
 import shared.exceptions.SinReservasActivasException;
+import shared.exceptions.UsuarioNoEncontradoException;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class LibrosTerminalController {
     private final BibliotecaApplicationService bibliotecaApplicationService;
+    private final UsuarioApplicationService usuarioApplicationService;
     private final Scanner scanner = new Scanner(System.in);
 
-    public LibrosTerminalController(BibliotecaApplicationService bibliotecaApplicationService) {
+    public LibrosTerminalController(
+            BibliotecaApplicationService bibliotecaApplicationService,
+            UsuarioApplicationService usuarioApplicationService
+    ) {
         this.bibliotecaApplicationService = bibliotecaApplicationService;
+        this.usuarioApplicationService = usuarioApplicationService;
     }
 
     public void handleAgregarLibro() {
@@ -54,11 +62,35 @@ public class LibrosTerminalController {
     }
 
     public void handlePrestarLibro() {
-        System.out.print("Ingrese el rut del usuario: ");
-        String rutUsuarioInput = scanner.nextLine();
+        // Obtener RUT válido del usuario registrado
+        DocumentoRut rutUsuario = obtenerRutUsuarioValido();
 
-        DocumentoRut rutUsuario = DocumentoRut.definir(rutUsuarioInput);
+        // Obtener libro seleccionado
+        Libro libroSeleccionado = obtenerLibroSeleccionado();
 
+        // Realizar el préstamo
+        this.bibliotecaApplicationService.prestarLibro(libroSeleccionado.getUuid(), rutUsuario);
+    }
+
+    private DocumentoRut obtenerRutUsuarioValido() {
+        while (true) {
+            System.out.print("Ingrese el rut del usuario: ");
+            String rutUsuarioInput = scanner.nextLine();
+
+            try {
+                DocumentoRut rutUsuario = DocumentoRut.definir(rutUsuarioInput);
+                this.usuarioApplicationService.verificarUsuarioRegistrado(rutUsuario);
+                return rutUsuario; // RUT válido y usuario registrado
+            } catch (UsuarioNoEncontradoException e) {
+                System.out.println("Usuario no encontrado para el rut: " + rutUsuarioInput);
+                System.out.println("Por favor, intente nuevamente.");
+            } catch (Exception e) {
+                System.out.println("RUT inválido. Por favor, intente nuevamente.");
+            }
+        }
+    }
+
+    private Libro obtenerLibroSeleccionado() {
         System.out.print("Nombre del libro: ");
         String nombreLibro = scanner.nextLine();
 
@@ -70,6 +102,10 @@ public class LibrosTerminalController {
             throw new LibroNoEncontradoException("Libro no encontrado");
         }
 
+        return seleccionarLibroDeListado(librosEncontrados);
+    }
+
+    private Libro seleccionarLibroDeListado(ArrayList<Libro> librosEncontrados) {
         System.out.println("Libros encontrados:");
         for (int i = 0; i < librosEncontrados.size(); i++) {
             Libro libro = librosEncontrados.get(i);
@@ -77,27 +113,26 @@ public class LibrosTerminalController {
                     i + 1, libro.getTitulo(), libro.getAutor(), libro.getEstado(), libro.getUuid());
         }
 
-        System.out.print("Seleccione el número del libro a reservar (0 para cancelar): ");
-        int seleccionNum;
-        try {
-            seleccionNum = Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Entrada inválida. Debe ingresar un número.");
-            return;
-        }
+        while (true) {
+            System.out.print("Seleccione el número del libro a reservar (0 para cancelar): ");
 
-        if (seleccionNum == 0) {
-            System.out.println("Reserva cancelada.");
-            return;
-        }
+            try {
+                int seleccionNum = Integer.parseInt(scanner.nextLine());
 
-        if (seleccionNum < 1 || seleccionNum > librosEncontrados.size()) {
-            System.out.println("Número de selección inválido.");
-            return;
-        }
+                if (seleccionNum == 0) {
+                    throw new OperacionCanceladaException("Reserva cancelada por el usuario.");
+                }
 
-        Libro libroSeleccionado = librosEncontrados.get(seleccionNum - 1);
-        this.bibliotecaApplicationService.prestarLibro(libroSeleccionado.getUuid(), rutUsuario);
+                if (seleccionNum >= 1 && seleccionNum <= librosEncontrados.size()) {
+                    return librosEncontrados.get(seleccionNum - 1);
+                }
+
+                System.out.println("Número de selección inválido. Intente nuevamente.");
+
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Debe ingresar un número. Intente nuevamente.");
+            }
+        }
     }
 
     public void handleDevolverLibro() {
