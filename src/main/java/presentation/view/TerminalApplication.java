@@ -36,15 +36,18 @@ public class TerminalApplication {
             handleRegistrarUsuario();
             break;
           case 2:
-            handleAgregarLibro();
+            handleMostrarListaLibros();
             break;
           case 3:
-            handleBuscarLibro();
+            handleAgregarLibro();
             break;
           case 4:
-            handlePrestarLibro();
+            handleBuscarLibro();
             break;
           case 5:
+            handlePrestarLibro();
+            break;
+          case 6:
             handleDevolverLibro();
             break;
           case 0:
@@ -68,6 +71,14 @@ public class TerminalApplication {
         System.out.println("Presione Enter para continuar...");
         scanner.nextLine();
       }
+    }
+  }
+
+  private void handleMostrarListaLibros() {
+    try {
+      this.librosTerminalController.handleMostrarLibros();
+    } catch (LibroNoEncontradoException e) {
+      System.out.println("Error: Libros no encontrados");
     }
   }
 
@@ -153,10 +164,11 @@ public class TerminalApplication {
   private void mostrarMenu() {
     System.out.println("\n--- Menú Principal ---");
     System.out.println("1. Registrar usuario");
-    System.out.println("2. Agregar libro");
-    System.out.println("3. Buscar libro");
-    System.out.println("4. Prestar libro");
-    System.out.println("5. Devolver libro");
+    System.out.println("2. Mostrar libros registrados");
+    System.out.println("3. Agregar libro");
+    System.out.println("4. Buscar libro");
+    System.out.println("5. Prestar libro");
+    System.out.println("6. Devolver libro");
     System.out.println("0. Salir");
     System.out.println("----------------------");
   }

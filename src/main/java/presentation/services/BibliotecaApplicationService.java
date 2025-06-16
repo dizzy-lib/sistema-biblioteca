@@ -82,4 +82,8 @@ public class BibliotecaApplicationService {
   public ArrayList<Reserva> verReservasActivas() {
     return this.repositorioReservas.obtenerTodasLasReservas();
   }
+
+  public ArrayList<Libro> obtenerTodosLosLibros() {
+    return this.repositorioLibros.obtenerTodosLosLibros();
+  }
 }

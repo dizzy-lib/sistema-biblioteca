@@ -118,4 +118,17 @@ public class LibrosTerminalController {
 
         this.bibliotecaApplicationService.devolverLibro(Integer.parseInt(idReserva));
     }
+
+    public void handleMostrarLibros() {
+        ArrayList<Libro> libros = this.bibliotecaApplicationService.obtenerTodosLosLibros();
+
+        if (libros.isEmpty()) {
+            throw new LibroNoEncontradoException("No hay libros registrados en el sistema");
+        }
+
+        System.out.print("\n=== Libros registrados ===\n");
+        for (Libro libro : libros) {
+            System.out.println(libro.getUuid() + " - " + libro.getTitulo() + " - " + libro.getAutor() + " - " +  libro.getEditorial()  + " - "+ libro.getEstado());
+        }
+    }
 }
