@@ -13,6 +13,10 @@ import shared.exceptions.UsuarioNoEncontradoException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Clase que controla toda la lógica por front (terminal) de los libros
+ * de la biblioteca
+ */
 public class LibrosTerminalController {
     private final BibliotecaApplicationService bibliotecaApplicationService;
     private final UsuarioApplicationService usuarioApplicationService;
@@ -26,6 +30,9 @@ public class LibrosTerminalController {
         this.usuarioApplicationService = usuarioApplicationService;
     }
 
+    /**
+     * Método que maneja el caso de agregar un nuevo libro al sistema
+     */
     public void handleAgregarLibro() {
         System.out.print("Nombre del libro: ");
         String nombreLibro = scanner.nextLine();
@@ -44,6 +51,9 @@ public class LibrosTerminalController {
         );
     }
 
+    /**
+     * Método que maneja buscar un libro dentro del sistema
+     */
     public void handleBuscarLibro() {
         System.out.print("Ingrese término de búsqueda (título, autor, editorial): ");
         String criterioBusqueda = scanner.nextLine();
@@ -61,6 +71,9 @@ public class LibrosTerminalController {
         }
     }
 
+    /**
+     * Método que maneja el caso de prestamo de libros
+     */
     public void handlePrestarLibro() {
         // Obtener RUT válido del usuario registrado
         DocumentoRut rutUsuario = obtenerRutUsuarioValido();
@@ -72,6 +85,10 @@ public class LibrosTerminalController {
         this.bibliotecaApplicationService.prestarLibro(libroSeleccionado.getUuid(), rutUsuario);
     }
 
+    /**
+     * Método privado que se encarga de validar un usuario válido dentro del sistema
+     * @return DocumentoRut del usuario válido
+     */
     private DocumentoRut obtenerRutUsuarioValido() {
         while (true) {
             System.out.print("Ingrese el rut del usuario: ");
@@ -90,6 +107,10 @@ public class LibrosTerminalController {
         }
     }
 
+    /**
+     * Método privado que se encarga de obtener un libro seleccionado por terminal
+     * @return Libro seleccionado
+     */
     private Libro obtenerLibroSeleccionado() {
         System.out.print("Nombre del libro: ");
         String nombreLibro = scanner.nextLine();
@@ -105,6 +126,11 @@ public class LibrosTerminalController {
         return seleccionarLibroDeListado(librosEncontrados);
     }
 
+    /**
+     * Método privado que selecciona un libro del listado
+     * @param librosEncontrados Arraylist de lisbros encontrados del sistema
+     * @return Libro seleccionado por terminal
+     */
     private Libro seleccionarLibroDeListado(ArrayList<Libro> librosEncontrados) {
         System.out.println("Libros encontrados:");
         for (int i = 0; i < librosEncontrados.size(); i++) {
@@ -135,6 +161,9 @@ public class LibrosTerminalController {
         }
     }
 
+    /**
+     * Método que maneja el caso de devolver un libro del sistema
+     */
     public void handleDevolverLibro() {
         ArrayList<Reserva> reservasActivas = this.bibliotecaApplicationService.verReservasActivas();
 
@@ -145,7 +174,7 @@ public class LibrosTerminalController {
         System.out.print("\n=== Mostrando reservas activas ===\n");
 
         for (Reserva reserva : reservasActivas) {
-            System.out.println("ID: " + reserva.getId() + " | " + "Nombre: " + reserva.getLibro().getTitulo() + " | " + "Rut cliente: " + reserva.getUsuario().getRut().getFormateado());
+            System.out.println("ID: " + reserva.id() + " | " + "Nombre: " + reserva.libro().getTitulo() + " | " + "Rut cliente: " + reserva.usuario().getRut().getFormateado());
         }
 
         System.out.print("ID de la reserva: ");
@@ -154,6 +183,9 @@ public class LibrosTerminalController {
         this.bibliotecaApplicationService.devolverLibro(Integer.parseInt(idReserva));
     }
 
+    /**
+     * Método que maneja mostrar libros registrados dentro del sistema
+     */
     public void handleMostrarLibros() {
         ArrayList<Libro> libros = this.bibliotecaApplicationService.obtenerTodosLosLibros();
 

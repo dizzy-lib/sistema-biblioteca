@@ -9,6 +9,9 @@ import shared.exceptions.ReservaNoEncontradaException;
 
 import java.util.Optional;
 
+/**
+ * Clase de servicio que maneja la lógica de negocio de reservas o prestamos
+ */
 public class ServicioPrestamos {
   private final IRepositorioReservas repositorioReservas;
   private final ServicioLibros servicioLibros;
@@ -23,6 +26,12 @@ public class ServicioPrestamos {
     this.servicioUsuarios = servicioUsuarios;
   }
 
+  /**
+   * Método que genera una reserva
+   * @param uuidLibro uuid del libro a reservar
+   * @param rutUsuario rut del usuario registrado que quiere reservar
+   * @return reserva generada
+   */
   public Reserva generarReserva(String uuidLibro, DocumentoRut rutUsuario) {
     // Busca el libro a reservar
     Libro libro = this.servicioLibros.obtenerLibroPorId(uuidLibro);
@@ -44,9 +53,18 @@ public class ServicioPrestamos {
     return reserva;
   }
 
+  /**
+   * Método que busca una reserva por ID dentro del repositorio, en caso de no encontrar
+   * la reserva lanza una excepción ReservaNoEncontradaException
+   * de reservas dentro del sistema
+   * @param idReserva id de reserva
+   * @return reserva encontrada
+   */
   public Reserva buscarReservaPorId(int idReserva) {
+    // busca la reserva dentro del repositorio de reservas por el id
     Optional<Reserva> reserva = this.repositorioReservas.buscarReservaPorId(idReserva);
 
+    // En caso de no encontrar reserva lanza ReservaNoEncontradaException
     if (reserva.isEmpty()) {
       throw new ReservaNoEncontradaException(String.format("Reserva %d no encontrada", idReserva));
     }
@@ -54,12 +72,17 @@ public class ServicioPrestamos {
     return reserva.get();
   }
 
+  /**
+   * Método que elimina una reserva dentro del sistema, disponibilizando el libro
+   * reservado, y eliminando la reserva dentro del repositorio de reservas
+   * @param reserva reserva a cancelar
+   */
   public void eliminarReserva(Reserva reserva) {
     // obtiene el id de la reserva
-    int idReserva = reserva.getId();
+    int idReserva = reserva.id();
 
     // Marca como disponible el libro de la reserva
-    Libro libroReservado = reserva.getLibro();
+    Libro libroReservado = reserva.libro();
     String uuidLibroReservado = libroReservado.getUuid();
     this.servicioLibros.disponibilizarLibro(uuidLibroReservado);
 
@@ -78,7 +101,7 @@ public class ServicioPrestamos {
 
     // obtiene id de la reserva más alta, en caso de que no exista alguna reserva
     // devuelve 0
-    return ultimaReserva.map(Reserva::getId).orElse(0);
+    return ultimaReserva.map(Reserva::id).orElse(0);
 
   }
 }

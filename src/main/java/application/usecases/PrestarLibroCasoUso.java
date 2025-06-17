@@ -6,6 +6,9 @@ import domain.services.ServicioLibros;
 import domain.services.ServicioPrestamos;
 import domain.valueObject.DocumentoRut;
 
+/**
+ * Caso de uso para prestar un libro que está registrado dentro del sistema
+ */
 public class PrestarLibroCasoUso {
     private final ServicioLibros servicioLibros;
     private final ServicioPrestamos servicioPrestamos;

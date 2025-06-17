@@ -267,9 +267,9 @@ public class ServicioPersistencia {
       // Escribir cada reserva
       for (Reserva reserva : reservas) {
         String linea = String.join(SEPARADOR_CSV,
-            String.valueOf(reserva.getId()),
-            reserva.getUsuario().getRut().getFormateado(),
-            reserva.getLibro().getUuid());
+            String.valueOf(reserva.id()),
+            reserva.usuario().getRut().getFormateado(),
+            reserva.libro().getUuid());
         bw.write(linea);
         bw.newLine();
       }

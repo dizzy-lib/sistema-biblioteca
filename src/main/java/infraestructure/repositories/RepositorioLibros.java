@@ -10,13 +10,20 @@ import java.util.Optional;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Clase que maneja el repositorio de libros dentro de memoria,
+ * implementa la interfaz IRepositorioLibros que es la interfáz conectora
+ * para el resto del sistema, esta implementación es concreta, y puede ser cambiada
+ * para uso de otros repositorios como BBDD, caché, etc.
+ */
 public class RepositorioLibros implements IRepositorioLibros {
   private final HashMap<String, Libro> libros = new HashMap<>();
 
   @Override
   public ArrayList<Libro> buscarLibros(String criterio) {
-    Set<Libro> librosEncontradosSet = new HashSet<>(); // Use Set to avoid duplicates
+    Set<Libro> librosEncontradosSet = new HashSet<>(); // Usa Set para evitar duplicados
 
+    // Si no hay criterio o está vacío retorna el array vacío
     if (criterio == null || criterio.trim().isEmpty()) {
       return new ArrayList<>(librosEncontradosSet);
     }

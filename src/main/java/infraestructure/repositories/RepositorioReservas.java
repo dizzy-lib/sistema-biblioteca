@@ -34,11 +34,11 @@ public class RepositorioReservas implements IRepositorioReservas {
       throw new IllegalArgumentException("La reserva no puede ser nula");
     }
 
-    if (reserva.getId() <= 0) {
+    if (reserva.id() <= 0) {
       throw new IllegalArgumentException("El ID de la reserva debe ser positivo");
     }
 
-    reservas.put(reserva.getId(), reserva);
+    reservas.put(reserva.id(), reserva);
   }
 
   @Override

@@ -6,6 +6,9 @@ import domain.services.ServicioLibros;
 import interfaces.infraestructure.IRepositorioLibros;
 import shared.utils.Formateador;
 
+/**
+ * Caso de uso para agregar un libro dentro del sistema
+ */
 public class AgregarLibroCasoUso {
     private final IRepositorioLibros repositorioLibros;
     private final ServicioLibros servicioLibros;
@@ -46,7 +49,6 @@ public class AgregarLibroCasoUso {
                 editorialFormateado
         );
 
-        // validar que el libro esté correcto o lanza excepción
         // validar que el libro esté correcto o lanza excepción
         this.servicioLibros.validarLibro(libro);
 

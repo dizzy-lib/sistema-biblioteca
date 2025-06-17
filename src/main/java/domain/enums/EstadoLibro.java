@@ -1,6 +1,6 @@
 package domain.enums;
 
 public enum EstadoLibro {
-    RESERVADO,
-    LIBRE
+    RESERVADO, // libro reservado o prestado
+    LIBRE // libro libre
 }

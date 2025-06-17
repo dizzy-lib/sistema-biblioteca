@@ -22,12 +22,12 @@ public class Main {
   private static final String RUTA_ARCHIVO_RESERVAS_CSV = "reservas.csv";
 
   public static void main(String[] args) {
-    // Repositorios
+    // Inicializa los repositorios
     RepositorioLibros repositorioLibros = new RepositorioLibros();
     RepositorioUsuarios repositorioUsuarios = new RepositorioUsuarios();
     RepositorioReservas repositorioReservas = new RepositorioReservas();
 
-    // Servicios de dominio
+    // Incializa los servicios de dominio
     ServicioLibros servicioLibros = new ServicioLibros(repositorioLibros);
     ServicioUsuarios servicioUsuarios = new ServicioUsuarios(repositorioUsuarios);
     ServicioPrestamos servicioPrestamos = new ServicioPrestamos(repositorioReservas, servicioLibros, servicioUsuarios);

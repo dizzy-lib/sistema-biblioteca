@@ -39,5 +39,3 @@ public class Formateador {
     return resultado.toString();
   }
 }
-
-// aca voy a agregar un pequeño cmetarion para prubeas
