@@ -1,38 +1,56 @@
 package domain.entities;
 
-/**
- * Record de reserva, se escoge trabajar con un record vs una clase
- * ya que este record solo puede obtener datos y no actualizar, esto se debe
- * a que por lógica de negocio una reserva no puede ser modificada internamente
- */
-public record Reserva(int id, Usuario usuario, Libro libro) {
-    /**
-     * Método que obtiene el usuario de la reserva
-     *
-     * @return usuario
-     */
-    @Override
-    public Usuario usuario() {
-        return this.usuario;
+import java.time.LocalDate;
+import java.util.Objects;
+
+public class Reserva {
+    public static final int DIAS_PRESTAMO = 4;
+
+    private final int id;
+    private final Usuario usuario;
+    private final Libro libro;
+    private final LocalDate fechaVencimiento;
+
+    public Reserva(int id, Usuario usuario, Libro libro) {
+        this.id = id;
+        this.usuario = usuario;
+        this.libro = libro;
+        this.fechaVencimiento = LocalDate.now().plusDays(DIAS_PRESTAMO);
     }
 
-    /**
-     * Método que obtiene el libro reservado
-     *
-     * @return libro reservado
-     */
-    @Override
-    public Libro libro() {
-        return this.libro;
+    public Reserva(int id, Usuario usuario, Libro libro, LocalDate fechaVencimiento) {
+        this.id = id;
+        this.usuario = usuario;
+        this.libro = libro;
+        this.fechaVencimiento = fechaVencimiento;
     }
 
-    /**
-     * Método que obtiene el ID de la reserva
-     *
-     * @return id de reserva
-     */
+    public int getId() {
+        return id;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public Libro getLibro() {
+        return libro;
+    }
+
+    public LocalDate getFechaVencimiento() {
+        return fechaVencimiento;
+    }
+
     @Override
-    public int id() {
-        return this.id;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Reserva reserva = (Reserva) o;
+        return id == reserva.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

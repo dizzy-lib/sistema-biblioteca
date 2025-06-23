@@ -79,10 +79,10 @@ public class ServicioPrestamos {
    */
   public void eliminarReserva(Reserva reserva) {
     // obtiene el id de la reserva
-    int idReserva = reserva.id();
+    int idReserva = reserva.getId();
 
     // Marca como disponible el libro de la reserva
-    Libro libroReservado = reserva.libro();
+    Libro libroReservado = reserva.getLibro();
     String uuidLibroReservado = libroReservado.getUuid();
     this.servicioLibros.disponibilizarLibro(uuidLibroReservado);
 
@@ -101,7 +101,7 @@ public class ServicioPrestamos {
 
     // obtiene id de la reserva más alta, en caso de que no exista alguna reserva
     // devuelve 0
-    return ultimaReserva.map(Reserva::id).orElse(0);
+    return ultimaReserva.map(Reserva::getId).orElse(0);
 
   }
 }
