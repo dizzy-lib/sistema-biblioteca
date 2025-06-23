@@ -49,7 +49,7 @@ public class DocumentoRut {
 
         // Validar formato básico
         if (!esFormatoValido(rutLimpio)) {
-            throw new IllegalArgumentException("Formato de RUT inválido: " + rut);
+            throw new IllegalArgumentException("Formato de RUT inválido: " + rut + ". Formato esperado: 12.345.678-9");
         }
 
         // Separar número y dígito verificador

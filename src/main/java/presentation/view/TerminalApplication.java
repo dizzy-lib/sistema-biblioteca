@@ -141,7 +141,6 @@ public class TerminalApplication {
   private void handlePrestarLibro() {
     try {
       this.librosTerminalController.handlePrestarLibro();
-      System.out.println("Libro prestado exitosamente.");
     } catch (InputMismatchException e) {
       System.out.println("Error de entrada: " + e.getMessage());
     } catch (IllegalArgumentException e) {

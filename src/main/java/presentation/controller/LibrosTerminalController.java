@@ -79,14 +79,19 @@ public class LibrosTerminalController {
      * Método que maneja el caso de prestamo de libros
      */
     public void handlePrestarLibro() {
-        // Obtener RUT válido del usuario registrado
-        DocumentoRut rutUsuario = obtenerRutUsuarioValido();
+        try {
+            // Obtener RUT válido del usuario registrado
+            DocumentoRut rutUsuario = obtenerRutUsuarioValido();
 
-        // Obtener libro seleccionado
-        Libro libroSeleccionado = obtenerLibroSeleccionado();
+            // Obtener libro seleccionado
+            Libro libroSeleccionado = obtenerLibroSeleccionado();
 
-        // Realizar el préstamo
-        this.bibliotecaApplicationService.prestarLibro(libroSeleccionado.getUuid(), rutUsuario);
+            // Realizar el préstamo
+            this.bibliotecaApplicationService.prestarLibro(libroSeleccionado.getUuid(), rutUsuario);
+            System.out.println("Libro prestado exitosamente.");
+        } catch (OperacionCanceladaException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
@@ -95,18 +100,21 @@ public class LibrosTerminalController {
      */
     private DocumentoRut obtenerRutUsuarioValido() {
         while (true) {
-            System.out.print("Ingrese el rut del usuario: ");
+            System.out.print("Ingrese el rut del usuario (ej: 12.345.678-9 o 'cancelar' para volver): ");
             String rutUsuarioInput = scanner.nextLine();
+
+            if (rutUsuarioInput.equalsIgnoreCase("cancelar")) {
+                throw new OperacionCanceladaException("Operación de préstamo cancelada por el usuario.");
+            }
 
             try {
                 DocumentoRut rutUsuario = DocumentoRut.definir(rutUsuarioInput);
                 this.usuarioApplicationService.verificarUsuarioRegistrado(rutUsuario);
                 return rutUsuario; // RUT válido y usuario registrado
             } catch (UsuarioNoEncontradoException e) {
-                System.out.println("Usuario no encontrado para el rut: " + rutUsuarioInput);
-                System.out.println("Por favor, intente nuevamente.");
-            } catch (Exception e) {
-                System.out.println("RUT inválido. Por favor, intente nuevamente.");
+                System.out.println("Usuario no encontrado para el rut: " + rutUsuarioInput + ". Por favor, intente nuevamente.");
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage() + ". Por favor, intente nuevamente.");
             }
         }
     }
@@ -116,18 +124,23 @@ public class LibrosTerminalController {
      * @return Libro seleccionado
      */
     private Libro obtenerLibroSeleccionado() {
-        System.out.print("Nombre del libro: ");
-        String nombreLibro = scanner.nextLine();
+        while (true) {
+            System.out.print("Nombre del libro a buscar (o 'cancelar' para volver): ");
+            String nombreLibro = scanner.nextLine();
 
-        // Buscar el libro
-        ArrayList<Libro> librosEncontrados = this.bibliotecaApplicationService.buscarLibro(nombreLibro);
+            if (nombreLibro.equalsIgnoreCase("cancelar")) {
+                throw new OperacionCanceladaException("Operación de préstamo cancelada por el usuario.");
+            }
 
-        if (librosEncontrados.isEmpty()) {
-            System.out.println("No se encontraron libros con el título '" + nombreLibro + "'.");
-            throw new LibroNoEncontradoException("Libro no encontrado");
+            // Buscar el libro
+            ArrayList<Libro> librosEncontrados = this.bibliotecaApplicationService.buscarLibro(nombreLibro);
+
+            if (librosEncontrados.isEmpty()) {
+                System.out.println("No se encontraron libros con el título '" + nombreLibro + "'. Por favor intente de nuevo.");
+            } else {
+                return seleccionarLibroDeListado(librosEncontrados);
+            }
         }
-
-        return seleccionarLibroDeListado(librosEncontrados);
     }
 
     /**

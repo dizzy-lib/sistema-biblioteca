@@ -26,7 +26,7 @@ public class UsuarioTerminalController {
         System.out.print("Ingrese el nombre: ");
         String nombre = scanner.nextLine();
 
-        System.out.print("Ingrese el rut: ");
+        System.out.print("Ingrese el rut (ej: 12.345.678-9): ");
         String rutInput = scanner.nextLine();
 
         DocumentoRut rutInstance = DocumentoRut.definir(rutInput);
