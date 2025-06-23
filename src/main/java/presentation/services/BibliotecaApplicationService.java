@@ -11,10 +11,12 @@ import domain.services.ServicioLibros;
 import domain.services.ServicioPersistencia;
 import domain.services.ServicioPrestamos;
 import domain.valueObject.DocumentoRut;
+import domain.valueObject.LibroCatalogoEntry;
 import interfaces.infraestructure.IRepositorioLibros;
 import interfaces.infraestructure.IRepositorioReservas;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Clase de servicio de terminal que maneja los casos
@@ -136,5 +138,13 @@ public class BibliotecaApplicationService {
    */
   public ArrayList<Libro> obtenerTodosLosLibros() {
     return this.repositorioLibros.obtenerTodosLosLibros();
+  }
+
+  /**
+   * Método que obtiene un catálogo único de libros (título y autor)
+   * @return Set de libros únicos
+   */
+  public Set<LibroCatalogoEntry> obtenerCatalogoDeLibros() {
+    return this.repositorioLibros.obtenerCatalogoLibros();
   }
 }

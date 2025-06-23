@@ -3,6 +3,7 @@ package presentation.controller;
 import domain.entities.Libro;
 import domain.entities.Reserva;
 import domain.valueObject.DocumentoRut;
+import domain.valueObject.LibroCatalogoEntry;
 import presentation.services.BibliotecaApplicationService;
 import presentation.services.UsuarioApplicationService;
 import shared.exceptions.LibroNoEncontradoException;
@@ -10,8 +11,11 @@ import shared.exceptions.OperacionCanceladaException;
 import shared.exceptions.SinReservasActivasException;
 import shared.exceptions.UsuarioNoEncontradoException;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Clase que controla toda la lógica por front (terminal) de los libros
@@ -171,13 +175,30 @@ public class LibrosTerminalController {
             throw new SinReservasActivasException("No existen reservas activas dentro del sistema");
         }
 
-        System.out.print("\n=== Mostrando reservas activas ===\n");
+        // Ordenar las reservas por fecha de vencimiento
+        reservasActivas.sort((r1, r2) -> r1.getFechaVencimiento().compareTo(r2.getFechaVencimiento()));
+
+        System.out.print("\n=== Mostrando reservas activas (ordenadas por fecha de vencimiento) ===\n");
 
         for (Reserva reserva : reservasActivas) {
-            System.out.println("ID: " + reserva.id() + " | " + "Nombre: " + reserva.libro().getTitulo() + " | " + "Rut cliente: " + reserva.usuario().getRut().getFormateado());
+            long diasRestantes = ChronoUnit.DAYS.between(LocalDate.now(), reserva.getFechaVencimiento());
+            String estadoVencimiento;
+            if (diasRestantes < 0) {
+                estadoVencimiento = "Vencida hace " + Math.abs(diasRestantes) + " días";
+            } else {
+                estadoVencimiento = "Vence en " + diasRestantes + " días";
+            }
+
+            System.out.printf("ID: %d | Libro: %s | Usuario: %s | Vencimiento: %s (%s)%n",
+                    reserva.getId(),
+                    reserva.getLibro().getTitulo(),
+                    reserva.getUsuario().getRut().getFormateado(),
+                    reserva.getFechaVencimiento(),
+                    estadoVencimiento
+            );
         }
 
-        System.out.print("ID de la reserva: ");
+        System.out.print("ID de la reserva a devolver: ");
         String idReserva = scanner.nextLine();
 
         this.bibliotecaApplicationService.devolverLibro(Integer.parseInt(idReserva));
@@ -193,9 +214,45 @@ public class LibrosTerminalController {
             throw new LibroNoEncontradoException("No hay libros registrados en el sistema");
         }
 
-        System.out.print("\n=== Libros registrados ===\n");
+        // Ordenar los libros por título y luego por autor
+        libros.sort((l1, l2) -> {
+            int comp = l1.getTitulo().compareTo(l2.getTitulo());
+            if (comp == 0) {
+                return l1.getAutor().compareTo(l2.getAutor());
+            }
+            return comp;
+        });
+
+        System.out.print("\n=== Libros registrados (ordenados por título) ===\n");
         for (Libro libro : libros) {
             System.out.println(libro.getUuid() + " - " + libro.getTitulo() + " - " + libro.getAutor() + " - " +  libro.getEditorial()  + " - "+ libro.getEstado());
+        }
+    }
+
+    /**
+     * Método que maneja mostrar un catálogo único de libros (por título y autor)
+     */
+    public void handleMostrarCatalogoLibros() {
+        Set<LibroCatalogoEntry> catalogo = this.bibliotecaApplicationService.obtenerCatalogoDeLibros();
+
+        if (catalogo.isEmpty()) {
+            System.out.println("El catálogo de libros está vacío.");
+            return;
+        }
+
+        // Convertir a lista y ordenar para una presentación consistente
+        ArrayList<LibroCatalogoEntry> catalogoOrdenado = new ArrayList<>(catalogo);
+        catalogoOrdenado.sort((e1, e2) -> {
+            int comp = e1.titulo().compareTo(e2.titulo());
+            if (comp == 0) {
+                return e1.autor().compareTo(e2.autor());
+            }
+            return comp;
+        });
+
+        System.out.print("\n=== Catálogo de Libros (Títulos Únicos) ===\n");
+        for (LibroCatalogoEntry entry : catalogoOrdenado) {
+            System.out.println("Título: " + entry.titulo() + " | Autor: " + entry.autor());
         }
     }
 }
