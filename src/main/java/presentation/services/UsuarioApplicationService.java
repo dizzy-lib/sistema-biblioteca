@@ -6,8 +6,10 @@ import domain.services.ServicioPersistencia;
 import domain.services.ServicioUsuarios;
 import domain.valueObject.DocumentoRut;
 import interfaces.infraestructure.IRepositorioUsuarios;
+import domain.entities.Usuario;
 import shared.exceptions.UsuarioNoEncontradoException;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -60,5 +62,13 @@ public class UsuarioApplicationService {
             String messageError = String.format("Usuario con rut: %s no encontrado", rut);
             throw new UsuarioNoEncontradoException(messageError);
         }
+    }
+
+    /**
+     * Método que obtiene todos los usuarios del sistema
+     * @return ArrayList de todos los usuarios registrados
+     */
+    public ArrayList<Usuario> obtenerTodosLosUsuarios() {
+        return this.repositorioUsuarios.obtenerTodosLosUsuarios();
     }
 }

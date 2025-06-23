@@ -13,6 +13,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import domain.entities.Reserva;
@@ -181,7 +183,7 @@ public class ServicioPersistencia {
 
   /**
    * Carga reservas desde un archivo CSV.
-   * Formato CSV esperado: id_reserva;rut_usuario;uuid_libro
+   * Formato CSV esperado: id_reserva;rut_usuario;uuid_libro;fecha_vencimiento
    */
   public void cargarReservasDesdeCSV(String rutaArchivoCsv, IRepositorioReservas repoReservas,
       IRepositorioUsuarios repoUsuarios, IRepositorioLibros repoLibros) {
@@ -201,11 +203,12 @@ public class ServicioPersistencia {
         }
 
         String[] datos = linea.split(SEPARADOR_CSV);
-        if (datos.length >= 3) {
+        if (datos.length >= 4) {
           try {
             int idReserva = Integer.parseInt(datos[0].trim());
             String rutUsuarioStr = datos[1].trim();
             String uuidLibro = datos[2].trim();
+            LocalDate fechaVencimiento = LocalDate.parse(datos[3].trim());
 
             DocumentoRut rutUsuario = DocumentoRut.definir(rutUsuarioStr);
             Optional<Usuario> usuarioOpt = repoUsuarios.obtenerUsuario(rutUsuario);
@@ -223,7 +226,7 @@ public class ServicioPersistencia {
                     "Info: Libro " + libro.getUuid() + " marcado como RESERVADO debido a reserva activa " + idReserva);
                 libro.marcarComoReservado();
               }
-              Reserva reserva = new Reserva(idReserva, usuario, libro);
+              Reserva reserva = new Reserva(idReserva, usuario, libro, fechaVencimiento);
               repoReservas.agregarReserva(reserva);
             } else {
               if (usuarioOpt.isEmpty()) {
@@ -238,6 +241,8 @@ public class ServicioPersistencia {
             }
           } catch (NumberFormatException e) {
             System.err.println("Error al parsear ID de reserva en línea CSV: " + linea + " - " + e.getMessage());
+          } catch (DateTimeParseException e) {
+            System.err.println("Error al parsear fecha de vencimiento en línea CSV: " + linea + " - " + e.getMessage());
           } catch (IllegalArgumentException e) {
             System.err
                 .println("Error al parsear RUT o datos de reserva en línea CSV: " + linea + " - " + e.getMessage());
@@ -256,20 +261,21 @@ public class ServicioPersistencia {
 
   /**
    * Guarda la lista de reservas en un archivo CSV.
-   * Formato CSV: id_reserva;rut_usuario;uuid_libro
+   * Formato CSV: id_reserva;rut_usuario;uuid_libro;fecha_vencimiento
    */
   public void guardarReservasEnCSV(String rutaArchivoCsv, List<Reserva> reservas) {
     try (BufferedWriter bw = new BufferedWriter(new FileWriter(rutaArchivoCsv))) {
       // Escribir la cabecera
-      bw.write("id_reserva" + SEPARADOR_CSV + "rut_usuario" + SEPARADOR_CSV + "uuid_libro");
+      bw.write("id_reserva" + SEPARADOR_CSV + "rut_usuario" + SEPARADOR_CSV + "uuid_libro" + SEPARADOR_CSV + "fecha_vencimiento");
       bw.newLine();
 
       // Escribir cada reserva
       for (Reserva reserva : reservas) {
         String linea = String.join(SEPARADOR_CSV,
-            String.valueOf(reserva.id()),
-            reserva.usuario().getRut().getFormateado(),
-            reserva.libro().getUuid());
+            String.valueOf(reserva.getId()),
+            reserva.getUsuario().getRut().getFormateado(),
+            reserva.getLibro().getUuid(),
+            reserva.getFechaVencimiento().toString());
         bw.write(linea);
         bw.newLine();
       }

@@ -2,6 +2,7 @@ package domain.entities;
 
 import domain.enums.EstadoLibro;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -28,6 +29,7 @@ public class Libro {
 
     /**
      * Obtiene el uuid del libro
+     * 
      * @return uuid del libro
      */
     public String getUuid() {
@@ -36,6 +38,7 @@ public class Libro {
 
     /**
      * Método que obtiene el estado del libro
+     * 
      * @return estado del libro
      */
     public EstadoLibro getEstado() {
@@ -46,7 +49,8 @@ public class Libro {
      * Método que marca el libro como disponible dentro del sistema
      */
     public void marcarComoDiponible() {
-        if (this.estado == EstadoLibro.LIBRE) return;
+        if (this.estado == EstadoLibro.LIBRE)
+            return;
 
         this.estado = EstadoLibro.LIBRE;
     }
@@ -55,13 +59,15 @@ public class Libro {
      * Método que marca el libro como reservado
      */
     public void marcarComoReservado() {
-        if (this.estado == EstadoLibro.RESERVADO) return;
+        if (this.estado == EstadoLibro.RESERVADO)
+            return;
 
         this.estado = EstadoLibro.RESERVADO;
     }
 
     /**
      * Método que obtiene el título del libro
+     * 
      * @return titulo del libro
      */
     public String getTitulo() {
@@ -70,6 +76,7 @@ public class Libro {
 
     /**
      * Método que setea/actualiza el título del libro
+     * 
      * @param titulo título actualizado del libro
      */
     public void setTitulo(String titulo) {
@@ -78,6 +85,7 @@ public class Libro {
 
     /**
      * Método que obtiene el autor del libro
+     * 
      * @return autor del libro
      */
     public String getAutor() {
@@ -86,6 +94,7 @@ public class Libro {
 
     /**
      * Método que setea/actualiza el autor del libro
+     * 
      * @param autor autor actualizado del libro
      */
     public void setAutor(String autor) {
@@ -94,6 +103,7 @@ public class Libro {
 
     /**
      * Método que obtiene el género del libro
+     * 
      * @return género del libro
      */
     public String getGenero() {
@@ -102,6 +112,7 @@ public class Libro {
 
     /**
      * Método que setea/actualiza el género del libro
+     * 
      * @param genero nuevo género del libro
      */
     public void setGenero(String genero) {
@@ -110,6 +121,7 @@ public class Libro {
 
     /**
      * Método que obtiene la editorial del libro
+     * 
      * @return editorial del libro
      */
     public String getEditorial() {
@@ -118,9 +130,25 @@ public class Libro {
 
     /**
      * Método que setea/actualiza la editorial del libro
+     * 
      * @param editorial nueva editorial del libro
      */
     public void setEditorial(String editorial) {
         this.editorial = editorial;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Libro libro = (Libro) o;
+        return Objects.equals(uuid, libro.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid);
     }
 }

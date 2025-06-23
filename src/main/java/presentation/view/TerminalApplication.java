@@ -50,6 +50,12 @@ public class TerminalApplication {
           case 6:
             handleDevolverLibro();
             break;
+          case 7:
+            handleMostrarUsuarios();
+            break;
+          case 8:
+            handleMostrarCatalogoLibros();
+            break;
           case 0:
             running = false;
             System.out.println("Saliendo del sistema...");
@@ -79,6 +85,15 @@ public class TerminalApplication {
       this.librosTerminalController.handleMostrarLibros();
     } catch (LibroNoEncontradoException e) {
       System.out.println("Error: Libros no encontrados");
+    }
+  }
+
+  private void handleMostrarCatalogoLibros() {
+    try {
+      this.librosTerminalController.handleMostrarCatalogoLibros();
+    } catch (RuntimeException e) {
+      System.out.println("Error inesperado al mostrar el catálogo: " + e.getMessage());
+      e.printStackTrace();
     }
   }
 
@@ -126,7 +141,6 @@ public class TerminalApplication {
   private void handlePrestarLibro() {
     try {
       this.librosTerminalController.handlePrestarLibro();
-      System.out.println("Libro prestado exitosamente.");
     } catch (InputMismatchException e) {
       System.out.println("Error de entrada: " + e.getMessage());
     } catch (IllegalArgumentException e) {
@@ -155,6 +169,15 @@ public class TerminalApplication {
     }
   }
 
+  private void handleMostrarUsuarios() {
+    try {
+      this.usuarioTerminalController.handleMostrarUsuarios();
+    } catch (RuntimeException e) {
+      System.out.println("Error inesperado al mostrar usuarios: " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
+
   private void mostrarBanner() {
     System.out.println("=============================");
     System.out.println("=== Sistema de biblioteca ===");
@@ -169,6 +192,8 @@ public class TerminalApplication {
     System.out.println("4. Buscar libro");
     System.out.println("5. Prestar libro");
     System.out.println("6. Devolver libro");
+    System.out.println("7. Mostrar usuarios registrados");
+    System.out.println("8. Mostrar catálogo de libros (títulos únicos)");
     System.out.println("0. Salir");
     System.out.println("----------------------");
   }

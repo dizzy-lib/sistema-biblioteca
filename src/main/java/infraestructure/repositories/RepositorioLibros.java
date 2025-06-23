@@ -3,21 +3,23 @@ package infraestructure.repositories;
 import domain.entities.Libro;
 import interfaces.infraestructure.IRepositorioLibros;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
+import domain.valueObject.LibroCatalogoEntry;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Clase que maneja el repositorio de libros dentro de memoria,
  * implementa la interfaz IRepositorioLibros que es la interfáz conectora
- * para el resto del sistema, esta implementación es concreta, y puede ser cambiada
+ * para el resto del sistema, esta implementación es concreta, y puede ser
+ * cambiada
  * para uso de otros repositorios como BBDD, caché, etc.
  */
 public class RepositorioLibros implements IRepositorioLibros {
-  private final HashMap<String, Libro> libros = new HashMap<>();
+  private final ArrayList<Libro> libros = new ArrayList<>();
 
   @Override
   public ArrayList<Libro> buscarLibros(String criterio) {
@@ -30,7 +32,7 @@ public class RepositorioLibros implements IRepositorioLibros {
 
     String terminoBusqueda = criterio.trim().toLowerCase();
 
-    for (Libro libro : libros.values()) {
+    for (Libro libro : libros) {
       if (libro != null) {
         boolean matched = false;
         if (libro.getTitulo() != null && libro.getTitulo().toLowerCase().contains(terminoBusqueda)) {
@@ -60,8 +62,13 @@ public class RepositorioLibros implements IRepositorioLibros {
       throw new IllegalArgumentException("El título del libro no puede ser nulo o vacío");
     }
 
-    // Usar el UUID como clave en el HashMap
-    libros.put(libro.getUuid(), libro);
+    for (int i = 0; i < libros.size(); i++) {
+      if (libros.get(i).getUuid().equals(libro.getUuid())) {
+        libros.set(i, libro);
+        return;
+      }
+    }
+    libros.add(libro);
   }
 
   @Override
@@ -71,7 +78,7 @@ public class RepositorioLibros implements IRepositorioLibros {
     }
 
     // Eliminar usando el UUID como clave
-    libros.remove(libro.getUuid());
+    libros.removeIf(l -> l.getUuid().equals(libro.getUuid()));
   }
 
   @Override
@@ -80,12 +87,21 @@ public class RepositorioLibros implements IRepositorioLibros {
       return Optional.empty();
     }
 
-    // Buscar usando el UUID como clave
-    return Optional.ofNullable(libros.get(id.trim()));
+    String trimmedId = id.trim();
+    return libros.stream()
+        .filter(libro -> libro.getUuid().equals(trimmedId))
+        .findFirst();
   }
 
   @Override
   public ArrayList<Libro> obtenerTodosLosLibros() {
-    return new ArrayList<>(libros.values());
+    return new ArrayList<>(libros);
+  }
+
+  @Override
+  public Set<LibroCatalogoEntry> obtenerCatalogoLibros() {
+    return libros.stream()
+        .map(libro -> new LibroCatalogoEntry(libro.getTitulo(), libro.getAutor()))
+        .collect(Collectors.toSet());
   }
 }

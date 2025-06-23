@@ -1,9 +1,11 @@
 package interfaces.infraestructure;
 
 import domain.entities.Libro;
+import domain.valueObject.LibroCatalogoEntry;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Set;
 
 public interface IRepositorioLibros {
     /**
@@ -38,4 +40,10 @@ public interface IRepositorioLibros {
      * @return Arraylist de todos los libros del repositorio de libros
      */
     ArrayList<Libro> obtenerTodosLosLibros();
+
+    /**
+     * Método que obtiene un catálogo único de libros (título y autor)
+     * @return Set de libros únicos
+     */
+    Set<LibroCatalogoEntry> obtenerCatalogoLibros();
 }

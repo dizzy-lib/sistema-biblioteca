@@ -28,6 +28,6 @@ public class DevolverLibroCasoUso {
         this.servicioPrestamos.eliminarReserva(reserva);
 
         // retorna el libro ya disponible
-        return reserva.libro();
+        return reserva.getLibro();
     }
 }
